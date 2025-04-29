@@ -17,19 +17,6 @@ def seed_set(seed=50):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
 
-class SimpleMLP(nn.Module):
-    def __init__(self, output_dim=1, directions=64,resolutions=64):
-        super(SimpleMLP, self).__init__()
-        self.fc1 = nn.Linear(directions * resolutions, 256)
-        self.fc2 = nn.Linear(256, 64)
-        self.fc3 = nn.Linear(64, output_dim)
-
-    def forward(self, x):
-        x = x.view(x.size(0), -1)     
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)    
-        return x
 
 class GCN(torch.nn.Module):
     def __init__(self, hidden_channels=64):
@@ -108,9 +95,9 @@ def train(train_loader, model, optimizer, InputFeature):
         optimizer.zero_grad()
         if InputFeature == "ect":
             out = model(data.ect)
-        elif InputFeature == "moleculeGAT" or InputFeature == "moleculeGCN":
+        elif InputFeature == "GAT" or InputFeature == "GCN":
             out = model(data.x, data.edge_index, data.batch)
-        elif InputFeature == "moleculeAttentiveGNN":
+        elif InputFeature == "AttentiveFP":
             out = model(data.x, data.edge_index, data.edge_attr, data.batch)
 
         loss = F.mse_loss(out, data.y)
@@ -129,9 +116,9 @@ def test(test_loader, model, InputFeature):
         data = data.to(device)
         if InputFeature == "ect":
             out = model(data.ect)
-        elif InputFeature == "moleculeGAT" or InputFeature == "moleculeGCN":
+        elif InputFeature == "GAT" or InputFeature == "GCN":
             out = model(data.x, data.edge_index, data.batch)
-        elif InputFeature == "moleculeAttentiveGNN":
+        elif InputFeature == "AttentiveFP":
             out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         l = F.mse_loss(out, data.y, reduction='none').cpu()
         mse.append(l)
@@ -149,9 +136,9 @@ def train_model(model, train_loader, optimizer, device, InputFeature):
         optimizer.zero_grad()
         if InputFeature == "ect":
             out = model(data.ect)
-        elif InputFeature == "moleculeGAT" or InputFeature == "moleculeGCN":
+        elif InputFeature == "GAT" or InputFeature == "GCN":
             out = model(data.x, data.edge_index, data.batch)
-        elif InputFeature == "moleculeAttentiveGNN":
+        elif InputFeature == "AttentiveFP":
             out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         loss = F.mse_loss(out, data.y)
         loss.backward()
@@ -172,9 +159,9 @@ def evaluate_model(model, test_loader, device, InputFeature):
         data = data.to(device)
         if InputFeature == "ect":
             out = model(data.ect)
-        elif InputFeature == "moleculeGAT" or InputFeature == "moleculeGCN":
+        elif InputFeature == "GAT" or InputFeature == "GCN":
             out = model(data.x, data.edge_index, data.batch)
-        elif InputFeature == "moleculeAttentiveGNN":
+        elif InputFeature == "AttentiveFP":
             out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         y_true.append(data.y.detach().cpu().numpy())
         y_pred.append(out.detach().cpu().numpy())
@@ -182,7 +169,7 @@ def evaluate_model(model, test_loader, device, InputFeature):
     return np.concatenate(y_true), np.concatenate(y_pred)
 
 def print_cv_results(name, train_scores, test_scores):
-    print(f"\n📊 {name} scores:")
+    print(f"📊 {name} scores:")
     print(f"Train: {np.mean(train_scores):.4f} ± {np.std(train_scores):.4f}")
     print(f"Test:  {np.mean(test_scores):.4f} ± {np.std(test_scores):.4f}")
     df = pd.DataFrame({

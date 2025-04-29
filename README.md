@@ -27,7 +27,7 @@ env\Scripts\activate
 #### Option 1
 
 ```bash
-pip install rdkit pandas matplotlib torch torch_geometric tqdm networkx seaborn xgboost
+pip install rdkit pandas matplotlib torch torch_geometric tqdm networkx seaborn xgboost scikit-learn questionary
 ```
 
 To install the "dect" library:

@@ -109,7 +109,7 @@ def save_molecule_dataset_as_csv(df, nameDataset):
     try:
         os.stat(f"data/datasetCSV/")
     except:
-        os.mkdir(f"results/datasetCSV/")
+        os.mkdir(f"data/datasetCSV/")
         
     df.to_csv(f'data/datasetCSV/{nameDataset}.csv', index=False)
 
@@ -129,6 +129,12 @@ def join_datasets_in_single_one(folder_path):
 def exploratory_analysis_histogram_target(dataset,namesDataset):
 
     if isinstance(namesDataset, list) and len(namesDataset) > 1:
+
+        try:
+            os.stat(f"figures/AllDataset/")
+        except:
+            os.mkdir(f"figures/AllDataset/")
+
         fig, axes = plt.subplots(4,3, figsize=(20,40))
         for i, ax in enumerate(axes.flat):
             sns.histplot(data=dataset[dataset["dataset"]==namesDataset[i]], x="target", y = None, hue=None, ax=ax)
@@ -147,6 +153,10 @@ def exploratory_analysis_histogram_target(dataset,namesDataset):
                 plt.savefig(f"figures/AllDataset/TargetFeatureHistogramWholeDataset")
                 plt.close()
     else:
+        try:
+            os.stat(f"figures/{namesDataset}/")
+        except:
+            os.mkdir(f"figures/{namesDataset}/")
         plt.Figure(figsize=(5,5))
         sns.histplot(data=dataset, x='target', y=None, hue=None)
         plt.xlabel('Inhibition Constant ($K_i$) Values')

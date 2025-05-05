@@ -98,25 +98,28 @@ def get_median_order(df, metric):
 def read_results_file(dataset_path):
     dfs = []
 
-    for filename in os.listdir(dataset_path):
-        if filename.endswith('.csv'):
-            file_path = os.path.join(dataset_path, filename)
-            df = pd.read_csv(file_path)
-            
-            method_name = os.path.splitext(filename)[0]
-            df['Method'] = method_name
-            if method_name in fingerprint_list:
-                df['Category'] = "Fingerprint"
-            elif method_name in descriptor_list:
-                df['Category'] = "Descriptor"
-            elif method_name in gnns_list:
-                df["Category"] = "GNN embedding"
-            elif method_name in "ECT":
-                df["Category"] = "ECT"
-            elif method_name in "ECT+Fingerprint":
-                df["Category"] = "ECT+Fingerprint"
+    if not os.path.exists(dataset_path) or len(os.listdir(dataset_path)) == 0:
+        return False
+    else:
+        for filename in os.listdir(dataset_path):
+            if filename.endswith('.csv'):
+                file_path = os.path.join(dataset_path, filename)
+                df = pd.read_csv(file_path)
+                
+                method_name = os.path.splitext(filename)[0]
+                df['Method'] = method_name
+                if method_name in fingerprint_list:
+                    df['Category'] = "Fingerprint"
+                elif method_name in descriptor_list:
+                    df['Category'] = "Descriptor"
+                elif method_name in gnns_list:
+                    df["Category"] = "GNN embedding"
+                elif method_name in "ECT":
+                    df["Category"] = "ECT"
+                elif method_name in "ECT+Fingerprint":
+                    df["Category"] = "ECT+Fingerprint"
 
-            dfs.append(df)
+                dfs.append(df)
     return dfs
 
 def concat_results_in_single_csv(results_dfs):
@@ -158,14 +161,17 @@ def process_comparison(dataset_name, resultsPath="results"):
         os.mkdir(f"figures/{dataset_name}/")
 
     results_dfs = read_results_file(datasetResultsPath)
-    results = concat_results_in_single_csv(results_dfs)
-    plot_results(results, "train", dataset_name)
-    plot_results(results, "test", dataset_name)
-
-    if dataset_name == "AllDataset":
-        print(f"Done for general dataset (all datasets together). Plots saved at figures/{dataset_name}/")
+    if results_dfs == False: 
+        print(f"[X] No results found for {dataset_name} dataset. Please, check the path and try again.\n")
     else:
-        print(f"Done for {dataset_name} dataset. Plots saved at figures/{dataset_name}/")
+        results = concat_results_in_single_csv(results_dfs)
+        plot_results(results, "train", dataset_name)
+        plot_results(results, "test", dataset_name)
+
+        if dataset_name == "AllDataset":
+            print(f"Done for general dataset (all datasets together). Plots saved at figures/{dataset_name}/")
+        else:
+            print(f"Done for {dataset_name} dataset. Plots saved at figures/{dataset_name}/")
 
 def main():
     try:

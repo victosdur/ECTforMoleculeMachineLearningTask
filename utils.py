@@ -169,7 +169,10 @@ def evaluate_model(model, test_loader, device, InputFeature):
     return np.concatenate(y_true), np.concatenate(y_pred)
 
 def print_cv_results(name, train_scores, test_scores):
-    print(f"📊 {name} scores:")
+    if name == "Fit time":
+        print(f"⏱️ Fit time for train and score time for test (seconds):")
+    else:
+        print(f"📊 {name} scores:")
     print(f"Train: {np.mean(train_scores):.4f} ± {np.std(train_scores):.4f}")
     print(f"Test:  {np.mean(test_scores):.4f} ± {np.std(test_scores):.4f}")
     df = pd.DataFrame({

@@ -11,6 +11,7 @@ import xgboost as xgb
 from utils import *
 from sklearn.metrics import make_scorer, mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import cross_validate, KFold
+from sklearn.preprocessing import StandardScaler
 from torch_geometric.utils import from_smiles
 from dect.directions import generate_uniform_directions 
 from dect.ect import compute_ect_edges
@@ -19,6 +20,7 @@ from torch.utils.data import Subset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import AttentiveFP
 
+import time
 import questionary
 from questionary import Style
 
@@ -39,7 +41,8 @@ dataset_list = [
     "LIPO",
     "MUSC1",
     "MUSC2",
-    "SOL"]
+    "SOL"
+]
 
 fingerprint_list = [
     "ECFP4",
@@ -206,8 +209,8 @@ def show_menu():
 
 def compute_molecule_graphECT_from_smiles(dfDataset):
     graph_list = []
-    num_thetas=64
-    resolutions=64
+    num_thetas=158
+    resolutions=16
     v = generate_uniform_directions(num_thetas=num_thetas,d=9,seed=0,device='cpu') #device cpu or cuda as in torch
     for i, smile in tqdm(enumerate(dfDataset['smiles']), total=len(dfDataset), leave=True, desc="Computing ECT"):
         g = from_smiles(smile)
@@ -243,7 +246,9 @@ def run_ect_method(dfDataset, nameDataset):
     for i in range(len(graph_list)):
         X.append(graph_list[i].ect.detach().squeeze().numpy().T.flatten())
         y.append(dfDataset['target'][i])
-
+    scaler = StandardScaler()
+    scaler.fit(X)
+    Xscaled = scaler.transform(X)
     xgb_model = xgb.XGBRegressor(
             objective='reg:squarederror',
             n_estimators=1000,
@@ -258,11 +263,12 @@ def run_ect_method(dfDataset, nameDataset):
     }
     cv = KFold(n_splits=10, shuffle=True, random_state=42)
 
-    results = cross_validate(xgb_model, X, y, scoring=scoring, cv=cv, return_train_score=True)
+    results = cross_validate(xgb_model, Xscaled, y, scoring=scoring, cv=cv, return_train_score=True)
     results_rmse = print_cv_results("RMSE", results['train_rmse'], results['test_rmse'])
     results_r2 = print_cv_results("R2", results['train_r2'], results['test_r2'])
     results_mae = print_cv_results("MAE", -results['train_mae'], -results['test_mae']) # as it comes in negative way.
-    df_results = pd.concat([results_rmse, results_r2, results_mae], ignore_index=True)
+    results_time = print_cv_results("Fit_time", results['fit_time'], results['score_time'])
+    df_results = pd.concat([results_rmse, results_r2, results_mae, results_time], ignore_index=True)
 
     try:
         os.stat(f"results/{nameDataset}/")
@@ -301,7 +307,10 @@ def run_ect_plus_fingerprint_method(dfDataset, nameDataset,fingerprintName):
         Xect.append(graph_list[i].ect.detach().squeeze().numpy().T.flatten())
         y.append(dfFinal['target'][i])
 
-    X=np.concatenate((Xect,Xfingerprint),axis=1)
+    scaler = StandardScaler()
+    scaler.fit(Xect)
+    Xectscaled = scaler.transform(Xect)
+    X=np.concatenate((Xectscaled,Xfingerprint),axis=1)
 
     xgb_model = xgb.XGBRegressor(
             objective='reg:squarederror',
@@ -321,7 +330,8 @@ def run_ect_plus_fingerprint_method(dfDataset, nameDataset,fingerprintName):
     results_rmse = print_cv_results("RMSE", results['train_rmse'], results['test_rmse'])
     results_r2 = print_cv_results("R2", results['train_r2'], results['test_r2'])
     results_mae = print_cv_results("MAE", -results['train_mae'], -results['test_mae']) # as it comes in negative way.
-    df_results = pd.concat([results_rmse, results_r2, results_mae], ignore_index=True)
+    results_time = print_cv_results("Fit_time", results['fit_time'], results['score_time'])
+    df_results = pd.concat([results_rmse, results_r2, results_mae, results_time], ignore_index=True)
 
     try:
         os.stat(f"results/{nameDataset}/")
@@ -376,7 +386,8 @@ def run_fingerprint_method(dfDataset, nameDataset, nameFingerprint):
     results_rmse = print_cv_results("RMSE", results['train_rmse'], results['test_rmse'])
     results_r2 = print_cv_results("R2", results['train_r2'], results['test_r2'])
     results_mae = print_cv_results("MAE", -results['train_mae'], -results['test_mae']) # as it comes in negative way.
-    df_results = pd.concat([results_rmse, results_r2, results_mae], ignore_index=True)
+    results_time = print_cv_results("Fit_time", results['fit_time'], results['score_time'])
+    df_results = pd.concat([results_rmse, results_r2, results_mae, results_time], ignore_index=True)
 
     try:
         os.stat(f"results/{nameDataset}/")
@@ -430,7 +441,8 @@ def run_descriptor_method(dfDataset, nameDataset, descriptor):
     results_rmse = print_cv_results("RMSE", results['train_rmse'], results['test_rmse'])
     results_r2 = print_cv_results("R2", results['train_r2'], results['test_r2'])
     results_mae = print_cv_results("MAE", -results['train_mae'], -results['test_mae']) # as it comes in negative way.
-    df_results = pd.concat([results_rmse, results_r2, results_mae], ignore_index=True)
+    results_time = print_cv_results("Fit_time", results['fit_time'], results['score_time'])
+    df_results = pd.concat([results_rmse, results_r2, results_mae, results_time], ignore_index=True)
 
     try:
         os.stat(f"results/{nameDataset}/")
@@ -446,8 +458,8 @@ def run_gnn_method(graph_list, nameDataset, gnn):
     k_folds = 10
     cv = KFold(n_splits=k_folds, shuffle=True, random_state=42)
 
-    rmse_scores_train, r2_scores_train, mae_scores_train = [], [], []
-    rmse_scores_test, r2_scores_test, mae_scores_test = [], [], []
+    rmse_scores_train, r2_scores_train, mae_scores_train, fit_time = [], [], [], []
+    rmse_scores_test, r2_scores_test, mae_scores_test, score_time = [], [], [], []
 
     for fold, (train_idx, test_idx) in enumerate(cv.split(graph_list)):
 
@@ -469,12 +481,17 @@ def run_gnn_method(graph_list, nameDataset, gnn):
 
         optimizer = torch.optim.Adam(model.parameters(), lr=10**-2.5,
                                     weight_decay=10**-5)
-        
+        initTrainTime = time.time()
         epochs = 100
         for epoch in range(epochs):
             y_train_true, y_train_pred = train_model(model, train_loader, optimizer, device, gnn)
+        endTrainTime = time.time()
+        fit_time.append(endTrainTime - initTrainTime)
 
+        initScoreTime = time.time()
         y_test_true, y_test_pred = evaluate_model(model, test_loader, device, gnn)
+        endScoreTime = time.time()
+        score_time.append(endScoreTime - initScoreTime)
 
         # Métricas
         rmse_scores_train.append(np.sqrt(mean_squared_error(y_train_true, y_train_pred)))
@@ -492,7 +509,8 @@ def run_gnn_method(graph_list, nameDataset, gnn):
     results_rmse = print_cv_results("RMSE", rmse_scores_train, rmse_scores_test)
     results_r2 = print_cv_results("R2", r2_scores_train, r2_scores_test)
     results_mae = print_cv_results("MAE", mae_scores_train, mae_scores_test)
-    df_results = pd.concat([results_rmse, results_r2, results_mae], ignore_index=True)
+    results_time = print_cv_results("Fit_time", fit_time, score_time)
+    df_results = pd.concat([results_rmse, results_r2, results_mae, results_time], ignore_index=True)
     df_results.to_csv(f'results/{nameDataset}/{gnn}.csv', index=False)
     print(f"Done for Graph Neural Network {gnn}")
     

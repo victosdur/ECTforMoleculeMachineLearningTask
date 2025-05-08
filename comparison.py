@@ -13,14 +13,12 @@ nameDataset = [
     "ALOX5AP",
     "ATR",
     "DPP4",
-    "HLMC",
     "JAK1",
     "JAK2",
     "KOR",
-    "LIPO",
     "MUSC1",
     "MUSC2",
-    "SOL"]
+    ]
 
 fingerprint_list = [
     "ECFP4",
@@ -67,14 +65,11 @@ menu_options = [
     {"name": "ALOX5AP", "value": 5},
     {"name": "ATR", "value": 6},
     {"name": "DPP4", "value": 7},
-    {"name": "HLMC", "value": 8},
-    {"name": "JAK1", "value": 9},
-    {"name": "JAK2", "value": 10},
-    {"name": "KOR", "value": 11},
-    {"name": "LIPO", "value": 12},
-    {"name": "MUSC1", "value": 13},
-    {"name": "MUSC2", "value": 14},
-    {"name": "SOL", "value": 15},
+    {"name": "JAK1", "value": 8},
+    {"name": "JAK2", "value": 9},
+    {"name": "KOR", "value": 10},
+    {"name": "MUSC1", "value": 11},
+    {"name": "MUSC2", "value": 12},
     
 ]
 

@@ -34,14 +34,11 @@ dataset_list = [
     "ALOX5AP",
     "ATR",
     "DPP4",
-    "HLMC",
     "JAK1",
     "JAK2",
     "KOR",
-    "LIPO",
     "MUSC1",
     "MUSC2",
-    "SOL"
 ]
 
 fingerprint_list = [
@@ -81,12 +78,8 @@ def load_molecule_dataset(file_path, dataset_name):
             smiles = Chem.MolToSmiles(mol)
             if dataset_name in ["ADRA1A", "ALOX5AP", "ATR", "JAK1", "KOR", "MUSC1", "MUSC2"]:
                 target = np.log(float(mol.GetProp("Ki (nM)").replace(">", "").replace("<", "")))
-            elif dataset_name in ["DPP4","JAK2","LIPO"]:
+            elif dataset_name in ["DPP4","JAK2"]:
                 target = float(mol.GetProp("target").replace(">", "").replace("<", ""))
-            elif dataset_name in ["HLMC"]:
-                target = float(mol.GetProp("LOG HLM_CLint (mL/min/kg)").replace(">", "").replace("<", ""))
-            elif dataset_name in ["SOL"]:
-                target = float(mol.GetProp("LOG SOLUBILITY PH 6.8 (ug/mL)").replace(">", "").replace("<", ""))
 
         except Exception as e:
             smiles = 'invalid'
@@ -138,14 +131,14 @@ def exploratory_analysis_histogram_target(dataset,namesDataset):
         except:
             os.mkdir(f"figures/AllDataset/")
 
-        fig, axes = plt.subplots(4,3, figsize=(20,40))
+        fig, axes = plt.subplots(3,3, figsize=(20,40))
         for i, ax in enumerate(axes.flat):
             sns.histplot(data=dataset[dataset["dataset"]==namesDataset[i]], x="target", y = None, hue=None, ax=ax)
             ax.set_xlabel("Inhibition Constant ($K_i$) Values")
             ax.set_ylabel("Count")
             ax.set_title(f"Histogram of target feature for {namesDataset[i]} dataset")
 
-            if i == 4*3-1:
+            if i == 3*3-1:
                 plt.savefig("figures/AllDataset/TargetFeatureHistogramPerDataset")
                 plt.close()
                 plt.Figure(figsize=(5,5))
@@ -183,14 +176,11 @@ menu_options = [
     {"name": "ALOX5AP", "value": 5},
     {"name": "ATR", "value": 6},
     {"name": "DPP4", "value": 7},
-    {"name": "HLMC", "value": 8},
-    {"name": "JAK1", "value": 9},
-    {"name": "JAK2", "value": 10},
-    {"name": "KOR", "value": 11},
-    {"name": "LIPO", "value": 12},
-    {"name": "MUSC1", "value": 13},
-    {"name": "MUSC2", "value": 14},
-    {"name": "SOL", "value": 15},
+    {"name": "JAK1", "value": 8},
+    {"name": "JAK2", "value": 9},
+    {"name": "KOR", "value": 10},
+    {"name": "MUSC1", "value": 11},
+    {"name": "MUSC2", "value": 112},
     
 ]
 

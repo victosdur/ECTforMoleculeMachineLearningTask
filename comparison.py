@@ -8,6 +8,16 @@ import seaborn as sns
 import questionary
 from questionary import Style
 
+plt.rcParams.update({
+    'font.size': 14,              # tamaño base de fuente
+    'axes.titlesize': 16,         # tamaño del título del gráfico
+    'axes.labelsize': 16,         # etiquetas de los ejes
+    'xtick.labelsize': 12,        # tamaño de los ticks en el eje x
+    'ytick.labelsize': 16,        # tamaño de los ticks en el eje y
+    'legend.fontsize': 13,        # tamaño de la leyenda
+    'figure.titlesize': 16,       # título general (si usas suptitle)
+})
+
 nameDataset = [
     "ADRA1A",
     "ALOX5AP",
@@ -87,7 +97,10 @@ def show_menu():
 
 def get_median_order(df, metric):
     df_metric = df[df["metric"] == metric]
-    median_order = df_metric.groupby("Method")["value"].median().sort_values().index
+    if metric == "R2":
+        median_order = df_metric.groupby("Method")["value"].mean().sort_values(ascending=False).index
+    else:
+        median_order = df_metric.groupby("Method")["value"].mean().sort_values().index
     return median_order
 
 def read_results_file(dataset_path):
@@ -128,17 +141,20 @@ def plot_results(results_df, type_split, name):
     rmse_order = get_median_order(results_df_selected, "RMSE")
     sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="RMSE"], x="value",y="Method", hue="Category", order=rmse_order, ax=axes[0],legend=False)
     axes[0].set_xlabel('RMSE')
-    axes[0].set_title(f'RMSE {type_split} error per method for {name} dataset')
+    axes[0].set_ylabel('') 
+    # axes[0].set_title(f'RMSE {type_split} error per method for {name} dataset')
 
     r2_order = get_median_order(results_df_selected, "R2")
     sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="R2"], x="value",y="Method", order=r2_order, hue="Category", ax=axes[1],legend=False)
     axes[1].set_xlabel('R2')
-    axes[1].set_title(f'R2 {type_split} error per method for {name} dataset')
+    axes[1].set_ylabel('') 
+    # axes[1].set_title(f'R2 {type_split} error per method for {name} dataset')
 
     mae_order = get_median_order(results_df_selected, "MAE")
     sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="MAE"], x="value",y="Method", hue="Category", order=mae_order, ax=axes[2])
     axes[2].set_xlabel('MAE')
-    axes[2].set_title(f'MAE {type_split} error per method for {name} dataset')
+    axes[2].set_ylabel('') 
+    # axes[2].set_title(f'MAE {type_split} error per method for {name} dataset')
 
 
     plt.legend(title='Representation type')

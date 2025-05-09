@@ -72,12 +72,14 @@ python experiments.py
 
 Then, you have like a menu, in which you can select one of the previous commented options. The results are saved in the folder "results"
 
-- comparison.py: This file generates a boxplot comparison between the different methods from the results obtained according the running of the previous script ("experiments.py file). You can run it:
+- comparison.py: This file generates a boxplot comparison between the different methods from the results obtained according the running of the previous script ("experiments.py" file). You can run it:
 
 ```bash
 python comparison.py
 ```
 As previously, you have a menu, in which you can select for which dataset you want to generate the comparison plots.
+
+- resultsprinter.py: This file prints in console the mean and standard deviation results for the differents methods and datasets, obtained from the results of "experiments.py" file. It follows the same structure than the two previous scripts.
 
 - FiguresIllustration.ipynb: This notebooks contains the code for generate some figures that serves as illustration in the paper.
 

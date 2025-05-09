@@ -51,7 +51,7 @@ fingerprint_list = [
     "PubChem",
     "CATS2D",
     "Pharm2D",
-    "EState"
+    "EState",
 ]
 
 descriptor_list = [
@@ -67,7 +67,7 @@ descriptor_list = [
 gnns_list = [
     "GCN",
     "GAT",
-    "AttentiveFP"
+    "AttentiveFP",
 ]
 
 def load_molecule_dataset(file_path, dataset_name):

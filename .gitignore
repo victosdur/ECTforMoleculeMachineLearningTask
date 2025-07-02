@@ -3,3 +3,5 @@ data/datasetRaw
 data/datasetCSV
 CleanFeaturesFolder.ipynb
 boxplotmodification.ipynb
+experimentsUsingECTlibrary_smooth.ipynb
+tests.ipynb

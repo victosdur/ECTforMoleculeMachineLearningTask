@@ -1,7 +1,7 @@
 # EulerCharacteristicTransform_Molecules
-This repository contains data and experiments associated to the paper Toscano.Duran, V., and Rieck, B. (2025). "Enhancing Molecule Learning with Topological Information: An ECT-Based Approach. Submitted to "I Congreso de la Sociedad Española de Inteligencia Artificial en Biomedicina (CIABiomed)". Preprint will be available soon in arXiv.
+This repository contains data and experiments associated to the paper Toscano.Duran, V., Rieck, B., and Rottach, F. (2025). "Molecular Machine Learning Using Euler Characteristic Transforms". Submitted to "I Congreso de la Sociedad Española de Inteligencia Artificial en Biomedicina (CIABiomed)". Preprint will be available soon in arXiV.
 
-In this work, we compare and explore the use of the ECT-based molecule representation for improving the prediction of $K_i$, a key molecular property, as well as performing a comparison between our approach and traditional methods over a series of molecule datasets (12 datasets in total) against traditional methods. By using this topological representation, as well as combining it with traditional molecular representations, we aim to enhance predictive accuracy and provide new insights into the role of molecular shape in molecular learning. Our experiments shows that our ECT-based approach for molecule prediction performs very well. In addition, experiment shows that the combination the ECT-based approach with traditional methods leads to performs better over traditional methods, highlighting the complementary value of combining multiple sources of information in predictive models. Ultimately, this work contributes to the growing body of evidence suggesting that incorporating molecular shape at a deeper level can lead to more robust and informative models, opening up new avenues for the design of better targeted and more effective therapies.
+In this work, we compare and explore the use of the ECT-based molecular representation, which is computed directly over molecular graphs derived from handcrafted atomic features, to predict $K_i$, a key molecular property, as well as perform a comparison between our approach and traditional methods over a series of nine binding affinity datasets. By using this topological representation, as well as combining it with traditional molecular representations, we aim to enhance predictive performance and provide new insights into the role of molecular shape in molecular learning. Our experiments shows that our ECT-based approach exhibites competitive predictive performance, in some cases even outperforming all alternative methods. In addition, our experiments show that the combination of our ECT-based approach with existing methods, more specifically with the AVALON fingerprint, leads to improved performance, thus highlighting the complementary value of multiscale topological and shape information. Ultimately, our work contributes to the growing body of evidence suggesting that incorporating molecular shape at a fundamental level can lead to more robust and informative models, opening up new avenues for the design of better molecular machine learning and more effective therapies.
 
 
 ## Usage
@@ -9,7 +9,7 @@ In this work, we compare and explore the use of the ECT-based molecule represent
 1) Clone this repository:
 
 ```bash
-git clone https://github.com/victosdur/EulerCharacteristicTransform_Molecules.git
+git clone https://github.com/victosdur/ECTforMoleculeLearningTask.git
 ```
 
 2) Create a virtual environment (it has been developed specifically using Python3.10.11):
@@ -87,4 +87,4 @@ As previously, you have a menu, in which you can select for which dataset you wa
 
 If you want to use our code or data for your experiments, please cite our paper. Once the paper is published, we will update this information with the official citation.
 
-For further information, please contact us at: vtoscano@us.es and bastian.grossenbacher@unifr.ch
+For further information, please contact us at: vtoscano@us.es, bastian.grossenbacher@unifr.ch and florian.rottach@boehringer-ingelheim.com

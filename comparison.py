@@ -59,6 +59,26 @@ gnns_list = [
     "AttentiveFP"
 ]
 
+method_category={}
+for i,elements in enumerate([fingerprint_list,descriptor_list,gnns_list]):
+    for element in elements:
+        if i == 0:
+            method_category[element]="Fingerprint"
+        elif i == 1:
+            method_category[element]="Descriptor"
+        if i == 2:
+            method_category[element]="GNN"
+method_category["ECT"]="ECT"
+method_category["ECT+Fingerprint"]="ECT"
+method_category
+
+category_colors = {
+    "Fingerprint": "green",
+    "Descriptor": "blue",
+    "GNN": "orange",
+    "ECT": "red"
+}
+
 
 custom_style = Style([
     ('instruction', 'fg:#ffffff bold'),    # Texto de la pregunta
@@ -122,10 +142,8 @@ def read_results_file(dataset_path):
                     df['Category'] = "Descriptor"
                 elif method_name in gnns_list:
                     df["Category"] = "GNN embedding"
-                elif method_name in "ECT":
+                elif method_name in ["ECT","ECT+Fingerprint"]:
                     df["Category"] = "ECT"
-                elif method_name in "ECT+Fingerprint":
-                    df["Category"] = "ECT+Fingerprint"
 
                 dfs.append(df)
     return dfs
@@ -135,8 +153,11 @@ def concat_results_in_single_csv(results_dfs):
     return df_results
 
 def plot_results(results_df, type_split, name):
-    fig, axes = plt.subplots(1, 3, figsize=(15, 10))
+    fig, axes = plt.subplots(1, 2, figsize=(15, 10))
     results_df_selected = results_df[results_df['dataset']==type_split].copy()
+
+    # Obtener colores por método
+    method_colors = {method: category_colors[method_category[method]] for method in results_df_selected["Method"].unique()}
 
     rmse_order = get_median_order(results_df_selected, "RMSE")
     sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="RMSE"], x="value",y="Method", hue="Category", order=rmse_order, ax=axes[0],legend=False)
@@ -145,16 +166,11 @@ def plot_results(results_df, type_split, name):
     # axes[0].set_title(f'RMSE {type_split} error per method for {name} dataset')
 
     r2_order = get_median_order(results_df_selected, "R2")
-    sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="R2"], x="value",y="Method", order=r2_order, hue="Category", ax=axes[1],legend=False)
+    sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="R2"], x="value",y="Method", order=r2_order, hue="Category", ax=axes[1],legend=True)
     axes[1].set_xlabel('R2')
     axes[1].set_ylabel('') 
+    axes[1].invert_xaxis()
     # axes[1].set_title(f'R2 {type_split} error per method for {name} dataset')
-
-    mae_order = get_median_order(results_df_selected, "MAE")
-    sns.boxplot(data=results_df_selected[results_df_selected["metric"]=="MAE"], x="value",y="Method", hue="Category", order=mae_order, ax=axes[2])
-    axes[2].set_xlabel('MAE')
-    axes[2].set_ylabel('') 
-    # axes[2].set_title(f'MAE {type_split} error per method for {name} dataset')
 
 
     plt.legend(title='Representation type')

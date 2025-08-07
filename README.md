@@ -1,7 +1,8 @@
-# EulerCharacteristicTransform_Molecules
-This repository contains data and experiments associated to the paper Toscano.Duran, V., Rieck, B., and Rottach, F. (2025). "Molecular Machine Learning Using Euler Characteristic Transforms". Submitted to "I Congreso de la Sociedad Española de Inteligencia Artificial en Biomedicina (CIABiomed)". Preprint available in [arXiV](https://arxiv.org/abs/2507.03474).
+# ECTforMoleculeMachineLearningTask
+This repository contains data and experiments associated to the paper Toscano.Duran, V., Rieck, B., and Rottach, F. (2025). "Molecular Machine Learning Using Euler Characteristic Transforms". Submitted and accepted at ["I Congreso de la Sociedad Española de Inteligencia Artificial en Biomedicina (CIABiomed)"](https://2025.iabiomed.org/). Preprint available in [arXiV](https://arxiv.org/abs/2507.03474).
 
-In this work, we compare and explore the use of the ECT-based molecular representation, which is computed directly over molecular graphs derived from handcrafted atomic features, to predict $K_i$, a key molecular property, as well as perform a comparison between our approach and traditional methods over a series of nine binding affinity datasets. By using this topological representation, as well as combining it with traditional molecular representations, we aim to enhance predictive performance and provide new insights into the role of molecular shape in molecular learning. Our experiments shows that our ECT-based approach exhibites competitive predictive performance, in some cases even outperforming all alternative methods. In addition, our experiments show that the combination of our ECT-based approach with existing methods, more specifically with the AVALON fingerprint, leads to improved performance, thus highlighting the complementary value of multiscale topological and shape information. Ultimately, our work contributes to the growing body of evidence suggesting that incorporating molecular shape at a fundamental level can lead to more robust and informative models, opening up new avenues for the design of better molecular machine learning and more effective therapies.
+The shape of a molecule determines its physicochemical and biological properties. However, it is often underrepresented in standard molecular representation learning approaches. Here, we propose using the Euler Characteristic Transform (ECT) as a geometrical-topological  descriptor. Computed directly from molecular graphs constructed usinghandcrafted atomic features, the ECT enables the extraction of multiscale structural features,  offering a novel way to encode molecular shape in the feature space. We assess the predictive performance of this representation across nine benchmark regression datasets, all centered around predicting the inhibition constant K_i. In addition, we compare our proposed ECT-based descriptor against traditional molecular representations and methods, such as molecular fingerprints/descriptors  and graph neural networks (GNNs). Our results show that our ECT-based representation achieves competitive performance, ranking among the best-performing methods on several datasets. More importantly, combining our descriptor with established representations, particularly with the AVALON fingerprint, significantly enhances predictive performance, outperforming other methods on most datasets. These findings highlight the complementary value of multiscale topological information and its potential for being combined with established techniques. Our study suggests that hybrid approaches incorporating explicit shape information can lead to more informative and robust molecular representations, enhancing and opening new avenues in molecular machine learning. To support reproducibility and foster open biomedical research, we provide open access to all experiments and code used in this work.
+
 
 
 ## Usage
@@ -81,11 +82,13 @@ As previously, you have a menu, in which you can select for which dataset you wa
 
 - resultsprinter.py: This file prints in console the mean and standard deviation results for the differents methods and datasets, obtained from the results of "experiments.py" file. It follows the same structure than the two previous scripts.
 
-- FiguresIllustration.ipynb: This notebooks contains the code for generate some figures that serves as illustration in the paper.
+- ECTParameterAnalysis.ipynb: This notebook contains the preliminary analyses performed to determine the number of directions and thresholds of the ECT in relation to the main experiments and results presented in the paper.
+
+- FiguresIllustration.ipynb: This notebook contains the code for generate some figures that serves as illustration in the paper.
 
 ## Citation and reference
 
-If you want to use our code or data for your experiments, please cite our paper:
+If you want to use our code or data for your experiments, please cite our paper (will be updated as soon as is published in CIABiomed proceedings):
 
 V. Toscano-Duran, F. Rottach, and B. Rieck, “Molecular machine learning using euler characteristic transforms,” arXiv preprint arXiv:2507.03474, Jul. 2025. DOI: 10.48550/arXiv.2507.03474.
 
